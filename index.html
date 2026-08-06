@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Marlène's Squamish Quest</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c2160">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Squamish Quest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
@@ -376,6 +384,53 @@
 </div>
 
 <script>
+// Register the service worker (helps installability + offline resilience).
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+// Capture the browser's native "install this app" prompt so we can trigger
+// it ourselves from a friendly in-app button, instead of relying on
+// Marlène to find "Add to Home Screen" buried in Chrome's menu.
+let deferredInstallPrompt = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('install-btn');
+  if(btn) btn.style.display = '';
+});
+window.addEventListener('appinstalled', () => {
+  deferredInstallPrompt = null;
+});
+
+function installPromptHtml(){
+  // Rendered hidden by default; JS reveals it once the browser confirms
+  // the app is actually installable, and hides itself again if it's
+  // already installed (running in standalone display mode).
+  const alreadyInstalled = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+  if(alreadyInstalled) return '';
+  return `
+    <div class="btn-row">
+      <button class="btn-ghost" id="install-btn" style="display:none;">Add to Home Screen</button>
+    </div>
+  `;
+}
+
+function wireInstallButton(){
+  const btn = document.getElementById('install-btn');
+  if(!btn) return;
+  if(deferredInstallPrompt) btn.style.display = '';
+  btn.addEventListener('click', async () => {
+    if(!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    btn.style.display = 'none';
+  });
+}
+
 /* ============================================================
    CONFIG
    Real Squamish checkpoints, in hunt order (per Draft 2). Home is
@@ -605,10 +660,10 @@ const STOP_BACKGROUNDS = {
 function applyBackground(stopId){
   const photo = STOP_BACKGROUNDS[stopId] || STOP_BACKGROUNDS[1];
   document.body.style.backgroundImage =
-    `linear-gradient(rgba(13,10,34,0.55), rgba(13,10,34,0.55)), url("${photo}")`;
+    `linear-gradient(rgba(13,10,34,0.3), rgba(13,10,34,0.3)), url("${photo}")`;
   document.body.style.backgroundSize = 'cover';
   document.body.style.backgroundPosition = 'center';
-  document.body.style.backgroundAttachment = 'fixed';
+  document.body.style.backgroundRepeat = 'no-repeat';
 }
 
 function clueIconHtml(isFinal){
@@ -701,8 +756,10 @@ function renderWelcome(opts = {}){
         <button class="btn-primary" onclick="window.location.search='?view=board'">See your progress</button>
       </div>
     ` : ''}
+    ${installPromptHtml()}
   `, { hideBadge: !hasProgress });
   fitPoemLines();
+  wireInstallButton();
   if(nextStop){
     document.getElementById('welcome-next').addEventListener('click', () => renderGate(nextStop));
   }

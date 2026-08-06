@@ -693,7 +693,7 @@ function renderVerify(stop, opts = {}){
 function renderSuccess(stop){
   shell(`
     <div class="stamp-mark">Verified</div>
-    <h1 class="title">${stop.isFinal ? 'Quest complete.' : 'Your clue.'}</h1>
+    <h1 class="title">${stop.isFinal ? 'Quest complete.' : 'Your next clue.'}</h1>
     <p class="body-text">${formatMultiline(stop.clue)}</p>
     <div class="btn-row">
       <button class="btn-primary" onclick="window.location.search='?view=board'">See your progress</button>

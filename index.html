@@ -320,6 +320,18 @@
    No physical items/resources are modelled or referenced here —
    the app only tracks which checkpoints have been found.
    ============================================================ */
+/* ============================================================
+   TESTING MODE
+   TEMPORARY: while true, every tag can be scanned repeatedly and
+   always behaves like a first-time scan (no "already found" state,
+   no getting locked into the gate/verify flow you've already
+   passed). Progress is still recorded in localStorage under the
+   hood, but the "already found" screen is skipped.
+   Set this back to false (or delete this block) before the real
+   hunt goes live, so the one-time-per-tag behaviour returns.
+   ============================================================ */
+const TESTING_MODE = true;
+
 const CONFIG = {
   siteName: "Marlène's Squamish Quest",
   storageKey: "mfq_progress_v1",
@@ -741,7 +753,7 @@ function initPreview(){
     const stop = findStop(parseInt(stopParam, 10));
     if(!stop){ renderNotFound(); return; }
     const progress = loadProgress();
-    if(progress.completed.includes(stop.id)){
+    if(progress.completed.includes(stop.id) && !TESTING_MODE){
       renderAlreadyDone(stop);
     } else if(stop.id === 1){
       renderWelcome({ nextStop: stop });

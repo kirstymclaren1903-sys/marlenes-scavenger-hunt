@@ -335,10 +335,13 @@ const TESTING_MODE = true;
 const CONFIG = {
   siteName: "Marlène's Squamish Quest",
   storageKey: "mfq_progress_v1",
+  // Paste your Formspree form endpoint here, e.g. "https://formspree.io/f/abcd1234"
+  // Leave it as "" to disable scan notifications entirely.
+  formspreeEndpoint: "https://formspree.io/f/xgawerrz",
   stops: [
     {
       id: 1,
-      locationLabel: "Doorstep",
+      locationLabel: "Home",
       question: "What house number did you just escape?",
       answers: ["1266"],
       hint: "Time's ticking",
@@ -450,6 +453,30 @@ function markCompleted(stopId){
   }
 }
 
+// Fires an email notification via Formspree whenever a real tag scan opens
+// this page for a valid stop — regardless of whether the security question
+// is later answered correctly. Silently does nothing if formspreeEndpoint
+// isn't set, and is intentionally skipped during TESTING_MODE so testing
+// scans don't spam the inbox. Never blocks or delays rendering the page.
+function notifyTagScanned(stop){
+  if(TESTING_MODE) return;
+  if(!CONFIG.formspreeEndpoint) return;
+  const payload = {
+    location: stop.locationLabel,
+    time: new Date().toLocaleString('en-CA', {
+      timeZone: 'America/Vancouver',
+      dateStyle: 'medium',
+      timeStyle: 'short'
+    }),
+    message: `NFC tag activated: ${stop.locationLabel} (stop ${stop.id})`
+  };
+  fetch(CONFIG.formspreeEndpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => { /* fail silently — a notification hiccup should never break the hunt */ });
+}
+
 function normalize(str){
   return String(str)
     .trim()
@@ -459,6 +486,11 @@ function normalize(str){
 
 function findStop(id){
   return CONFIG.stops.find(s => s.id === id) || null;
+}
+
+function getCompletedStopsOrdered(){
+  const progress = loadProgress();
+  return CONFIG.stops.filter(s => progress.completed.includes(s.id));
 }
 
 function escapeHtml(str){
@@ -537,6 +569,34 @@ function renderNotFound(){
   `, { hideBadge: true });
 }
 
+function renderReview(idx, onBack){
+  const list = getCompletedStopsOrdered();
+  if(!list.length){ onBack(); return; }
+  idx = Math.max(0, Math.min(list.length - 1, idx));
+  const s = list[idx];
+  shell(`
+    <h1 class="title">${escapeHtml(s.locationLabel)}</h1>
+    <p class="subtitle">Found ${idx + 1} of ${list.length}</p>
+    ${s.question ? `<p class="body-text"><strong>Question:</strong> ${escapeHtml(s.question)}</p>` : ''}
+    <p class="body-text">${formatMultiline(s.clue)}</p>
+    <hr class="divider">
+    <div class="btn-row">
+      <button class="btn-ghost" id="review-prev"${idx === 0 ? ' disabled' : ''}>◀ Previous</button>
+      <button class="btn-ghost" id="review-next"${idx === list.length - 1 ? ' disabled' : ''}>Next ▶</button>
+    </div>
+    <div class="btn-row">
+      <button class="btn-primary" id="review-back">Back</button>
+    </div>
+  `, { hideBadge: true });
+  if(idx > 0){
+    document.getElementById('review-prev').addEventListener('click', () => renderReview(idx - 1, onBack));
+  }
+  if(idx < list.length - 1){
+    document.getElementById('review-next').addEventListener('click', () => renderReview(idx + 1, onBack));
+  }
+  document.getElementById('review-back').addEventListener('click', onBack);
+}
+
 function renderGate(stop){
   shell(`
     <h1 class="title">${escapeHtml(stop.locationLabel)}</h1>
@@ -559,16 +619,27 @@ function renderGate(stop){
 }
 
 function renderDecline(){
+  const list = getCompletedStopsOrdered();
   shell(`
     <h1 class="title">All good.</h1>
     <p class="body-text">Thanks for playing, but this is a private gig. Have fun out there!</p>
+    ${list.length ? `
+      <hr class="divider">
+      <div class="btn-row">
+        <button class="btn-ghost" id="decline-review">See what you've found so far</button>
+      </div>
+    ` : ''}
   `, { hideBadge: true });
+  if(list.length){
+    document.getElementById('decline-review').addEventListener('click', () => renderReview(list.length - 1, renderDecline));
+  }
 }
 
 function renderVerify(stop, opts = {}){
   const attempts = opts.attempts || 0;
   let hintRevealed = !!opts.hintShown;
   const hasHint = !!stop.hint;
+  const reviewList = getCompletedStopsOrdered();
   shell(`
     <h1 class="title">${escapeHtml(stop.locationLabel)}</h1>
     <p class="subtitle">One quick check.</p>
@@ -586,9 +657,18 @@ function renderVerify(stop, opts = {}){
     <div class="btn-row">
       <button class="btn-primary" id="verify-submit">Submit</button>
     </div>
+    ${reviewList.length ? `
+      <hr class="divider">
+      <div class="btn-row">
+        <button class="btn-ghost" id="verify-review">See what you've found so far</button>
+      </div>
+    ` : ''}
   `);
   const input = document.getElementById('verify-input');
   input.focus();
+  if(reviewList.length){
+    document.getElementById('verify-review').addEventListener('click', () => renderReview(reviewList.length - 1, () => renderVerify(stop, opts)));
+  }
   if(hasHint){
     document.getElementById('hint-btn').addEventListener('click', () => {
       hintRevealed = true;
@@ -752,6 +832,7 @@ function initPreview(){
   if(stopParam !== null){
     const stop = findStop(parseInt(stopParam, 10));
     if(!stop){ renderNotFound(); return; }
+    notifyTagScanned(stop);
     const progress = loadProgress();
     if(progress.completed.includes(stop.id) && !TESTING_MODE){
       renderAlreadyDone(stop);

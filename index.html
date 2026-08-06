@@ -17,6 +17,7 @@
     --rust: #a3492a;
     --brass: #c39a4b;
     --moss: #5e7a63;
+    --verified-green: #2f7a42;
     --err: #8c2f1f;
     --font-stamp: 'Special Elite', 'Courier New', monospace;
     --font-body: 'Special Elite', 'Courier New', monospace;
@@ -242,9 +243,9 @@
   .stamp-mark{
     width:120px; height:120px; margin: 6px auto 18px;
     border-radius:50%;
-    border: 4px double var(--rust);
+    border: 4px double var(--verified-green);
     display:flex; align-items:center; justify-content:center;
-    color: var(--rust); font-family: var(--font-stamp);
+    color: var(--verified-green); font-family: var(--font-stamp);
     font-size:13px; text-align:center; text-transform:uppercase;
     letter-spacing:0.06em; line-height:1.3;
     transform: scale(1) rotate(-9deg);
@@ -265,6 +266,16 @@
     margin-bottom:10px;
   }
   .checkpoint-line:last-child{ margin-bottom:0; }
+  .checkpoint-link{
+    width:100%; text-align:left; background:none; border:none; padding:4px 0;
+    cursor:pointer; font-family: var(--font-body); color: inherit;
+  }
+  .checkpoint-link .g-name{
+    text-decoration: underline; text-decoration-color: rgba(38,51,44,0.35);
+    text-underline-offset: 2px;
+  }
+  .checkpoint-link:hover .g-name{ color: var(--rust); text-decoration-color: var(--rust); }
+  .checkpoint-link:focus-visible{ outline: 2px solid var(--rust); outline-offset: 2px; }
   .g-dot{
     width:5px; height:5px; border-radius:50%;
     background: var(--rust); flex-shrink:0;
@@ -505,6 +516,31 @@ function formatMultiline(str){
 
 const LIGHTBULB_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.05V17h6v-2.25c0-.85.4-1.55 1-2.05A7 7 0 0 0 12 2z"/></svg>`;
 
+// Hints accompany the CLUE (the riddle pointing to the next stop), not the
+// security question — so this markup/wiring is used on the clue-displaying
+// screens (success, revisit, review), never on the verify screen.
+function hintBlockHtml(stop){
+  if(!stop.hint) return '';
+  return `
+    <button type="button" class="hint-btn" id="hint-btn">
+      ${LIGHTBULB_ICON}
+      <span>Need a hint?</span>
+    </button>
+    <div class="feedback hint" id="hint-text">${escapeHtml(stop.hint)}</div>
+  `;
+}
+
+function wireHintToggle(stop){
+  if(!stop.hint) return;
+  const btn = document.getElementById('hint-btn');
+  const text = document.getElementById('hint-text');
+  if(!btn || !text) return;
+  btn.addEventListener('click', () => {
+    text.classList.add('show');
+    btn.style.display = 'none';
+  });
+}
+
 /* ============================================================
    RENDER HELPERS
    ============================================================ */
@@ -579,6 +615,7 @@ function renderReview(idx, onBack){
     <p class="subtitle">Found ${idx + 1} of ${list.length}</p>
     ${s.question ? `<p class="body-text"><strong>Question:</strong> ${escapeHtml(s.question)}</p>` : ''}
     <p class="body-text">${formatMultiline(s.clue)}</p>
+    ${hintBlockHtml(s)}
     <hr class="divider">
     <div class="btn-row">
       <button class="btn-ghost" id="review-prev"${idx === 0 ? ' disabled' : ''}>◀ Previous</button>
@@ -588,13 +625,14 @@ function renderReview(idx, onBack){
       <button class="btn-primary" id="review-back">Back</button>
     </div>
   `, { hideBadge: true });
+  wireHintToggle(s);
   if(idx > 0){
     document.getElementById('review-prev').addEventListener('click', () => renderReview(idx - 1, onBack));
   }
   if(idx < list.length - 1){
     document.getElementById('review-next').addEventListener('click', () => renderReview(idx + 1, onBack));
   }
-  document.getElementById('review-back').addEventListener('click', onBack);
+  document.getElementById('review-back').addEventListener('click', () => onBack());
 }
 
 function renderGate(stop){
@@ -619,63 +657,27 @@ function renderGate(stop){
 }
 
 function renderDecline(){
-  const list = getCompletedStopsOrdered();
   shell(`
     <h1 class="title">All good.</h1>
     <p class="body-text">Thanks for playing, but this is a private gig. Have fun out there!</p>
-    ${list.length ? `
-      <hr class="divider">
-      <div class="btn-row">
-        <button class="btn-ghost" id="decline-review">See what you've found so far</button>
-      </div>
-    ` : ''}
   `, { hideBadge: true });
-  if(list.length){
-    document.getElementById('decline-review').addEventListener('click', () => renderReview(list.length - 1, renderDecline));
-  }
 }
 
 function renderVerify(stop, opts = {}){
   const attempts = opts.attempts || 0;
-  let hintRevealed = !!opts.hintShown;
-  const hasHint = !!stop.hint;
-  const reviewList = getCompletedStopsOrdered();
   shell(`
     <h1 class="title">${escapeHtml(stop.locationLabel)}</h1>
     <p class="subtitle">One quick check.</p>
     <p class="body-text">${escapeHtml(stop.question)}</p>
     <div id="verify-feedback" class="feedback ${opts.error ? 'err show' : ''}">${opts.error ? 'Not quite — give it another go.' : ''}</div>
-    ${hasHint ? `
-      <button type="button" class="hint-btn" id="hint-btn"${hintRevealed ? ' style="display:none;"' : ''}>
-        ${LIGHTBULB_ICON}
-        <span>Need a hint?</span>
-      </button>
-      <div class="feedback hint${hintRevealed ? ' show' : ''}" id="hint-text">${escapeHtml(stop.hint)}</div>
-    ` : ''}
     <label for="verify-input">Your answer</label>
     <input type="text" id="verify-input" autocomplete="off" autocapitalize="off" spellcheck="false">
     <div class="btn-row">
       <button class="btn-primary" id="verify-submit">Submit</button>
     </div>
-    ${reviewList.length ? `
-      <hr class="divider">
-      <div class="btn-row">
-        <button class="btn-ghost" id="verify-review">See what you've found so far</button>
-      </div>
-    ` : ''}
   `);
   const input = document.getElementById('verify-input');
   input.focus();
-  if(reviewList.length){
-    document.getElementById('verify-review').addEventListener('click', () => renderReview(reviewList.length - 1, () => renderVerify(stop, opts)));
-  }
-  if(hasHint){
-    document.getElementById('hint-btn').addEventListener('click', () => {
-      hintRevealed = true;
-      document.getElementById('hint-text').classList.add('show');
-      document.getElementById('hint-btn').style.display = 'none';
-    });
-  }
   const submit = () => {
     const value = normalize(input.value);
     const accepted = stop.answers.map(normalize);
@@ -683,7 +685,7 @@ function renderVerify(stop, opts = {}){
       markCompleted(stop.id);
       renderSuccess(stop);
     } else {
-      renderVerify(stop, { attempts: attempts + 1, error: true, hintShown: hintRevealed });
+      renderVerify(stop, { attempts: attempts + 1, error: true });
     }
   };
   document.getElementById('verify-submit').addEventListener('click', submit);
@@ -695,10 +697,12 @@ function renderSuccess(stop){
     <div class="stamp-mark">Verified</div>
     <h1 class="title">${stop.isFinal ? 'Quest complete.' : 'Your next clue.'}</h1>
     <p class="body-text">${formatMultiline(stop.clue)}</p>
+    ${hintBlockHtml(stop)}
     <div class="btn-row">
       <button class="btn-primary" onclick="window.location.search='?view=board'">See your progress</button>
     </div>
   `);
+  wireHintToggle(stop);
 }
 
 function renderAlreadyDone(stop){
@@ -706,21 +710,23 @@ function renderAlreadyDone(stop){
     <h1 class="title">${escapeHtml(stop.locationLabel)}</h1>
     <p class="subtitle">Already found.</p>
     <p class="body-text">${formatMultiline(stop.clue)}</p>
+    ${hintBlockHtml(stop)}
     <div class="btn-row">
       <button class="btn-ghost" onclick="window.location.search='?view=board'">See your progress</button>
     </div>
   `);
+  wireHintToggle(stop);
 }
 
 function renderBoard(overrideIds){
   const progress = overrideIds ? { completed: overrideIds } : loadProgress();
   const foundStops = CONFIG.stops.filter(s => progress.completed.includes(s.id));
   const checklistHtml = foundStops.length
-    ? foundStops.map(s => `
-        <div class="checkpoint-line">
+    ? foundStops.map((s, i) => `
+        <button type="button" class="checkpoint-line checkpoint-link" data-idx="${i}">
           <span class="g-dot"></span>
           <span class="g-name">${escapeHtml(s.locationLabel)}</span>
-        </div>`).join('')
+        </button>`).join('')
     : `<p class="empty-state">Nothing found yet.<br>Go find a tag.</p>`;
 
   shell(`
@@ -728,7 +734,18 @@ function renderBoard(overrideIds){
     <p class="subtitle">${progress.completed.length} of ${CONFIG.stops.length} checkpoints found</p>
     <hr class="divider">
     ${checklistHtml}
+    <hr class="divider">
+    <div class="btn-row">
+      <button class="btn-ghost" id="board-back">Back</button>
+    </div>
   `, { badgeCount: progress.completed.length });
+
+  document.getElementById('board-back').addEventListener('click', () => history.back());
+  if(foundStops.length){
+    document.querySelectorAll('.checkpoint-link').forEach(el => {
+      el.addEventListener('click', () => renderReview(parseInt(el.dataset.idx, 10), renderBoard));
+    });
+  }
 }
 
 function fitPoemLines(){
@@ -778,7 +795,6 @@ function buildPreviewSteps(){
     steps.push({ label: `${stop.locationLabel} — revisit`, run: () => renderAlreadyDone(stop) });
   });
   steps.push({ label: 'Wrong answer state', run: () => renderVerify(CONFIG.stops[0], { attempts: 1, error: true }) });
-  steps.push({ label: 'Hint revealed', run: () => renderVerify(CONFIG.stops[0], { hintShown: true }) });
   steps.push({ label: 'Declined', run: renderDecline });
   steps.push({ label: 'Unknown tag', run: renderNotFound });
   steps.push({ label: 'Progress — empty', run: () => renderBoard([]) });

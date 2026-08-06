@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marlène's Squamish Quest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --spruce: #2c2160;
+    --spruce-deep: #0d0a22;
+    --parchment: #f2e8d4;
+    --parchment-dim: #e6d8b8;
+    --ink: #26332c;
+    --rust: #a3492a;
+    --brass: #c39a4b;
+    --moss: #5e7a63;
+    --err: #8c2f1f;
+    --font-stamp: 'Special Elite', 'Courier New', monospace;
+    --font-body: 'Special Elite', 'Courier New', monospace;
+    --font-mono: 'Special Elite', 'Courier New', monospace;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0; min-height:100vh;
+    background-color: var(--spruce-deep);
+    background-image:
+      radial-gradient(1px 1px at 63.4% 4.4%, rgba(255,255,255,0.5), transparent 60%),
+      radial-gradient(1.6px 1.6px at 15.4% 11.8%, rgba(255,255,255,0.89), transparent 60%),
+      radial-gradient(0.8px 0.8px at 10.3% 42.5%, rgba(255,255,255,0.41), transparent 60%),
+      radial-gradient(1.4px 1.4px at 24.3% 59.8%, rgba(255,255,255,0.47), transparent 60%),
+      radial-gradient(1px 1px at 64.4% 54.3%, rgba(255,255,255,0.62), transparent 60%),
+      radial-gradient(2px 2px at 28.7% 85.5%, rgba(255,255,255,0.83), transparent 60%),
+      radial-gradient(1px 1px at 69.0% 34.7%, rgba(255,255,255,0.48), transparent 60%),
+      radial-gradient(1.2px 1.2px at 75.3% 11.8%, rgba(255,255,255,0.41), transparent 60%),
+      radial-gradient(2px 2px at 83.4% 60.0%, rgba(255,255,255,0.38), transparent 60%),
+      radial-gradient(1.2px 1.2px at 46.1% 14.0%, rgba(255,255,255,0.4), transparent 60%),
+      radial-gradient(2px 2px at 30.1% 62.3%, rgba(255,255,255,0.57), transparent 60%),
+      radial-gradient(1.6px 1.6px at 20.5% 8.7%, rgba(255,255,255,0.49), transparent 60%),
+      radial-gradient(1px 1px at 29.8% 9.7%, rgba(255,255,255,0.87), transparent 60%),
+      radial-gradient(2px 2px at 38.5% 45.5%, rgba(255,255,255,0.57), transparent 60%),
+      radial-gradient(1px 1px at 37.5% 22.1%, rgba(255,255,255,0.77), transparent 60%),
+      radial-gradient(1.6px 1.6px at 67.6% 8.9%, rgba(255,255,255,0.45), transparent 60%),
+      radial-gradient(1.2px 1.2px at 72.0% 17.7%, rgba(255,255,255,0.51), transparent 60%),
+      radial-gradient(1px 1px at 90.8% 68.1%, rgba(255,255,255,0.76), transparent 60%),
+      radial-gradient(1px 1px at 82.9% 76.5%, rgba(255,255,255,0.84), transparent 60%),
+      radial-gradient(0.8px 0.8px at 79.3% 40.5%, rgba(255,255,255,0.48), transparent 60%),
+      radial-gradient(1px 1px at 92.5% 86.1%, rgba(255,255,255,0.48), transparent 60%),
+      radial-gradient(1.6px 1.6px at 49.9% 86.9%, rgba(255,255,255,0.63), transparent 60%),
+      radial-gradient(1.4px 1.4px at 27.4% 25.7%, rgba(255,255,255,0.67), transparent 60%),
+      radial-gradient(1.4px 1.4px at 73.7% 43.1%, rgba(255,255,255,0.59), transparent 60%),
+      radial-gradient(1.4px 1.4px at 23.1% 97.8%, rgba(255,255,255,0.65), transparent 60%),
+      radial-gradient(1px 1px at 74.6% 84.7%, rgba(255,255,255,0.73), transparent 60%),
+      radial-gradient(0.8px 0.8px at 78.0% 42.5%, rgba(255,255,255,0.58), transparent 60%),
+      radial-gradient(1px 1px at 59.2% 46.9%, rgba(255,255,255,0.93), transparent 60%),
+      radial-gradient(1.6px 1.6px at 84.6% 3.1%, rgba(255,255,255,0.42), transparent 60%),
+      radial-gradient(2px 2px at 86.9% 74.1%, rgba(255,255,255,0.73), transparent 60%),
+      radial-gradient(1.2px 1.2px at 12.7% 43.7%, rgba(255,255,255,0.35), transparent 60%),
+      radial-gradient(1.4px 1.4px at 71.3% 71.1%, rgba(255,255,255,0.81), transparent 60%),
+      radial-gradient(1.6px 1.6px at 50.7% 12.2%, rgba(255,255,255,0.53), transparent 60%),
+      radial-gradient(1px 1px at 63.3% 60.5%, rgba(255,255,255,0.57), transparent 60%),
+      radial-gradient(1.4px 1.4px at 17.5% 93.5%, rgba(255,255,255,0.9), transparent 60%),
+      radial-gradient(0.8px 0.8px at 59.5% 48.9%, rgba(255,255,255,0.91), transparent 60%),
+      radial-gradient(1px 1px at 86.4% 81.8%, rgba(255,255,255,0.49), transparent 60%),
+      radial-gradient(0.8px 0.8px at 25.1% 56.5%, rgba(255,255,255,0.4), transparent 60%),
+      radial-gradient(ellipse at top, var(--spruce) 0%, var(--spruce-deep) 75%);
+    background-attachment: fixed;
+    background-size: cover;
+    font-family: var(--font-body);
+    color: var(--ink);
+  }
+
+  body{
+    display:flex; align-items:center; justify-content:center;
+    padding: 28px 16px 60px;
+  }
+
+  #app{ width:100%; max-width: 460px; }
+
+  a{ color: inherit; }
+
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--parchment-dim);
+    text-align:center;
+    margin: 0 0 14px;
+    opacity:0.75;
+  }
+
+  /* ---- passport card ---- */
+  .card{
+    position:relative;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(0,0,0,0.035), transparent 45%),
+      radial-gradient(circle at 85% 80%, rgba(0,0,0,0.035), transparent 45%),
+      var(--parchment);
+    border-radius: 3px;
+    padding: 34px 28px 30px;
+    box-shadow: 0 22px 40px rgba(0,0,0,0.45), 0 2px 0 rgba(255,255,255,0.06) inset;
+    transform: rotate(-0.6deg);
+    border: 1px solid rgba(38,51,44,0.15);
+  }
+
+  .card::after{
+    content:"";
+    position:absolute; inset:8px;
+    border: 1px dashed rgba(38,51,44,0.25);
+    pointer-events:none;
+  }
+
+  .stamp-badge{
+    position:absolute; top:-14px; right:-10px;
+    width:64px; height:64px;
+    border-radius:50%;
+    background: var(--brass);
+    border: 2px solid var(--spruce-deep);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    transform: rotate(8deg);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.35);
+    font-family: var(--font-mono);
+    color: var(--spruce-deep);
+    text-align:center;
+    line-height:1.1;
+  }
+  .stamp-badge .n{ font-size:18px; font-weight:700; }
+  .stamp-badge .of{ font-size:8px; letter-spacing:0.05em; }
+
+  h1.title{
+    font-family: var(--font-stamp);
+    font-size: 22px;
+    letter-spacing: 0.01em;
+    margin: 0 0 4px;
+    color: var(--ink);
+  }
+
+  .subtitle{
+    font-size: 14px;
+    color: var(--moss);
+    margin: 0 0 22px;
+    font-style: italic;
+  }
+
+  p.body-text{
+    font-size: 16px;
+    line-height:1.55;
+    margin: 0 0 20px;
+  }
+
+  .poem{ margin: 0 0 20px; }
+  .poem-line{
+    margin: 0 0 6px;
+    line-height: 1.5;
+    white-space: nowrap;
+    font-size: 16px;
+  }
+  .poem-line:last-child{ margin-bottom: 0; }
+
+  .divider{
+    border:none;
+    border-top: 1px dashed rgba(38,51,44,0.3);
+    margin: 22px 0;
+  }
+
+  /* ---- buttons ---- */
+  .btn-row{ display:flex; gap:12px; flex-wrap:wrap; }
+
+  button{
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing:0.04em;
+    text-transform: uppercase;
+    cursor:pointer;
+    border-radius: 2px;
+    padding: 13px 18px;
+    border: 1px solid transparent;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  button:focus-visible{ outline: 2px solid var(--rust); outline-offset: 2px; }
+  button:active{ transform: translateY(1px); }
+
+  .btn-primary{
+    background: var(--rust); color: var(--parchment); flex:1;
+    box-shadow: 0 4px 0 #6f2f1a;
+  }
+  .btn-primary:hover{ background:#b5522f; }
+
+  .btn-ghost{
+    background: transparent; color: var(--ink);
+    border-color: rgba(38,51,44,0.35); flex:1;
+  }
+  .btn-ghost:hover{ background: rgba(38,51,44,0.06); }
+
+  .btn-link{
+    background:none; border:none; color: var(--moss);
+    text-decoration: underline; padding: 4px 0; font-size:12px;
+  }
+
+  /* ---- form ---- */
+  label{
+    display:block; font-family: var(--font-mono); font-size:11px;
+    text-transform:uppercase; letter-spacing:0.08em; color: var(--moss);
+    margin-bottom:8px;
+  }
+
+  input[type="text"]{
+    width:100%; font-family: var(--font-body); font-size:16px;
+    padding: 12px 14px; border: 1px solid rgba(38,51,44,0.35);
+    border-radius:2px; background: #fbf6ea; color: var(--ink);
+    margin-bottom: 14px;
+  }
+  input[type="text"]:focus-visible{ outline:2px solid var(--rust); outline-offset:1px; }
+
+  .feedback{
+    font-family: var(--font-mono); font-size:13px;
+    padding: 10px 12px; border-radius:2px; margin-bottom:14px;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.err{ background: rgba(140,47,31,0.1); color: var(--err); border:1px solid rgba(140,47,31,0.3); }
+  .feedback.hint{ background: rgba(94,122,99,0.12); color: var(--moss); border:1px solid rgba(94,122,99,0.3); }
+
+  .hint-btn{
+    display:inline-flex; align-items:center; gap:6px;
+    background:none; border:none; padding:2px 0;
+    margin: -8px 0 16px;
+    color: var(--moss); font-size:12px; text-transform:none; letter-spacing:normal;
+    cursor:pointer;
+  }
+  .hint-btn:hover{ color: var(--rust); }
+  .hint-btn svg{ flex-shrink:0; }
+  .hint-btn:focus-visible{ outline: 2px solid var(--rust); outline-offset: 2px; }
+
+  /* ---- stamp animation ---- */
+  .stamp-mark{
+    width:120px; height:120px; margin: 6px auto 18px;
+    border-radius:50%;
+    border: 4px double var(--rust);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--rust); font-family: var(--font-stamp);
+    font-size:13px; text-align:center; text-transform:uppercase;
+    letter-spacing:0.06em; line-height:1.3;
+    transform: scale(1) rotate(-9deg);
+    animation: stampDown 0.5s cubic-bezier(.2,1.6,.4,1);
+  }
+  @keyframes stampDown{
+    0%{ transform: scale(2.4) rotate(-16deg); opacity:0; }
+    55%{ transform: scale(0.92) rotate(-7deg); opacity:1; }
+    100%{ transform: scale(1) rotate(-9deg); opacity:1; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .stamp-mark{ animation: none; }
+  }
+
+  /* ---- progress checklist ---- */
+  .checkpoint-line{
+    display:flex; align-items:baseline; gap:8px; flex-wrap:wrap;
+    margin-bottom:10px;
+  }
+  .checkpoint-line:last-child{ margin-bottom:0; }
+  .g-dot{
+    width:5px; height:5px; border-radius:50%;
+    background: var(--rust); flex-shrink:0;
+    transform: translateY(-2px);
+  }
+  .g-name{
+    font-family: var(--font-stamp); font-size:14px;
+  }
+
+  .empty-state{
+    text-align:center; padding: 18px 10px; color: var(--moss);
+    font-family: var(--font-mono); font-size:13px; line-height:1.6;
+  }
+
+  footer.credit{
+    text-align:center; margin-top:18px;
+    font-family: var(--font-mono); font-size:10px;
+    color: var(--parchment-dim); opacity:0.55;
+  }
+
+  /* ---- TEMPORARY preview bar (?preview=1 only) ---- */
+  #preview-bar{
+    position: fixed; left:0; right:0; bottom:0;
+    display:none; align-items:center; justify-content:space-between; gap:10px;
+    background: rgba(13,10,34,0.94);
+    border-top: 2px dashed var(--brass);
+    padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+    z-index: 999;
+  }
+  #preview-bar.show{ display:flex; }
+  #preview-bar .pv-label{
+    flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    font-family: var(--font-mono); font-size:11px; color: var(--parchment-dim);
+  }
+  #preview-bar button{ padding:9px 14px; font-size:11px; flex:none; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="preview-bar">
+  <button class="btn-ghost" id="pv-prev">Prev</button>
+  <span class="pv-label" id="pv-label"></span>
+  <button class="btn-primary" id="pv-next">Next</button>
+</div>
+
+<script>
+/* ============================================================
+   CONFIG
+   Real Squamish checkpoints, in hunt order (per Draft 2). Home is
+   the final stop and has no security question in the source list,
+   so it skips straight from "yes" to the closing message (see
+   skipVerification).
+   No physical items/resources are modelled or referenced here —
+   the app only tracks which checkpoints have been found.
+   ============================================================ */
+const CONFIG = {
+  siteName: "Marlène's Squamish Quest",
+  storageKey: "mfq_progress_v1",
+  stops: [
+    {
+      id: 1,
+      locationLabel: "Doorstep",
+      question: "What house number did you just escape?",
+      answers: ["1266"],
+      hint: "Time's ticking",
+      clue: "I have the hands, I have the height,\nA town square's pride, a civic sight.\nAmong the houses here I stay;\nWhy put me here? I couldn't say."
+    },
+    {
+      id: 2,
+      locationLabel: "Clocktower",
+      question: "Gianni is from which country?",
+      answers: ["new zealand"],
+      hint: "Caffeinated Garibaldi",
+      clue: "Find the adventurous figure and waymarker of this land's true people"
+    },
+    {
+      id: 3,
+      locationLabel: "Adventure Centre Inukshuk",
+      question: "What's David's favourite colour?",
+      answers: ["orange"],
+      hint: "River path",
+      clue: "Choose the scenic path instead,\nWhere tidal waters branch and spread.\nPass sweet temptations, cross below—\nYour clue awaits plainly on show"
+    },
+    {
+      id: 4,
+      locationLabel: "Narwhal Icecream",
+      question: "Pista____chios?",
+      answers: ["fucking"],
+      hint: "Mural",
+      clue: "In his shadow, the spirit of the mountain is made purple"
+    },
+    {
+      id: 5,
+      locationLabel: "Chief Artwork",
+      question: "Which artist inspired the bear artwork you made for me?",
+      answers: ["nat tuke"],
+      hint: "Park",
+      clue: "A piece of the mountain came to town,\nWhere little climbers can be found."
+    },
+    {
+      id: 6,
+      locationLabel: "Little Boulder",
+      question: "You have at least a dozen of what brand of knife?",
+      answers: ["opinel"],
+      hint: "Donuts",
+      clue: "For your sake, I refrained from sharing the little riddle I wrote for this — it was obscene. Here's a summary that should point you in the right direction: delicious holes"
+    },
+    {
+      id: 7,
+      locationLabel: "Fox & Oak",
+      question: "What is the turtle game actually called?",
+      answers: ["sequoia"],
+      hint: "Absofruitly",
+      clue: "The pinnacle of the local café scene?\nPerhaps not, but it's worth a visit, you'll see.\nA bold little claim with treasures to share,\nStep inside — your next surprise is there."
+    },
+    {
+      id: 8,
+      locationLabel: "Lucas Teas",
+      question: "What is your baby's name?",
+      answers: ["janet"],
+      hint: "Game heaven",
+      clue: "I trade in cardboard worlds galore,\nThen open doors to something more"
+    },
+    {
+      id: 9,
+      locationLabel: "Arrow Wood Games",
+      question: "In Squamish Carcassonne, the Chief takes up how many tile sides?",
+      answers: ["one", "1"],
+      hint: "38351",
+      clue: "Where the heart is"
+    },
+    {
+      id: 10,
+      isFinal: true,
+      skipVerification: true,
+      locationLabel: "Home",
+      // No security question for this one — "yes" goes straight to
+      // the closing message.
+      clue: "Alright, I believe you! Congratulations on solving all my silly little puzzles! Happy Birthday Marlène, I hope it's a great year of playtime!"
+    }
+  ]
+};
+
+/* ============================================================
+   STATE HELPERS
+   ============================================================ */
+function getParam(name){
+  return new URLSearchParams(window.location.search).get(name);
+}
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(CONFIG.storageKey);
+    return raw ? JSON.parse(raw) : { completed: [] };
+  }catch(e){
+    return { completed: [] };
+  }
+}
+
+function saveProgress(progress){
+  try{
+    localStorage.setItem(CONFIG.storageKey, JSON.stringify(progress));
+  }catch(e){ /* storage unavailable — hunt still works, just won't persist */ }
+}
+
+function markCompleted(stopId){
+  const progress = loadProgress();
+  if(!progress.completed.includes(stopId)){
+    progress.completed.push(stopId);
+    saveProgress(progress);
+  }
+}
+
+function normalize(str){
+  return String(str)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, ''); // strip accents
+}
+
+function findStop(id){
+  return CONFIG.stops.find(s => s.id === id) || null;
+}
+
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatMultiline(str){
+  return escapeHtml(str).replace(/\n/g, '<br>');
+}
+
+const LIGHTBULB_ICON = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2.05V17h6v-2.25c0-.85.4-1.55 1-2.05A7 7 0 0 0 12 2z"/></svg>`;
+
+/* ============================================================
+   RENDER HELPERS
+   ============================================================ */
+const app = document.getElementById('app');
+
+function shell(innerHtml, opts = {}){
+  const total = CONFIG.stops.length;
+  const completedCount = opts.badgeCount !== undefined ? opts.badgeCount : loadProgress().completed.length;
+  const badge = opts.hideBadge ? '' : `
+    <div class="stamp-badge">
+      <div class="n">${completedCount}</div>
+      <div class="of">of ${total}</div>
+    </div>`;
+  app.innerHTML = `
+    <p class="eyebrow">${CONFIG.siteName}</p>
+    <div class="card">
+      ${badge}
+      ${innerHtml}
+    </div>
+    <footer class="credit">Made with love and extract of silly goose</footer>
+  `;
+}
+
+function renderWelcome(opts = {}){
+  const progress = loadProgress();
+  const hasProgress = progress.completed.length > 0;
+  const nextStop = opts.nextStop || null;
+  shell(`
+    <h1 class="title">The hunt is on.</h1>
+    <p class="subtitle">It's playtime...again.</p>
+    <div class="poem">
+      <p class="poem-line">Happy birthday, Marlène, today's yours to explore,</p>
+      <p class="poem-line">With riddles and surprises waiting in store.</p>
+      <p class="poem-line">Near and far, let your curiosity play,</p>
+      <p class="poem-line">Scan each hidden tag and find your way.</p>
+    </div>
+    ${nextStop ? `
+      <hr class="divider">
+      <div class="btn-row">
+        <button class="btn-primary" id="welcome-next">Next</button>
+      </div>
+    ` : hasProgress ? `
+      <hr class="divider">
+      <div class="btn-row">
+        <button class="btn-primary" onclick="window.location.search='?view=board'">See your progress</button>
+      </div>
+    ` : ''}
+  `, { hideBadge: !hasProgress });
+  fitPoemLines();
+  if(nextStop){
+    document.getElementById('welcome-next').addEventListener('click', () => renderGate(nextStop));
+  }
+}
+
+function renderNotFound(){
+  shell(`
+    <h1 class="title">Nothing here.</h1>
+    <p class="body-text">This link doesn't match a checkpoint. Double check the tag, or start from the beginning.</p>
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="window.location.search=''">Back to start</button>
+    </div>
+  `, { hideBadge: true });
+}
+
+function renderGate(stop){
+  shell(`
+    <h1 class="title">${escapeHtml(stop.locationLabel)}</h1>
+    <p class="subtitle">Before anything else...</p>
+    <p class="body-text">Are you Marlène?</p>
+    <div class="btn-row">
+      <button class="btn-primary" id="gate-yes">Yes, it's me</button>
+      <button class="btn-ghost" id="gate-no">No</button>
+    </div>
+  `);
+  document.getElementById('gate-yes').addEventListener('click', () => {
+    if(stop.skipVerification){
+      markCompleted(stop.id);
+      renderSuccess(stop);
+    } else {
+      renderVerify(stop);
+    }
+  });
+  document.getElementById('gate-no').addEventListener('click', () => renderDecline());
+}
+
+function renderDecline(){
+  shell(`
+    <h1 class="title">All good.</h1>
+    <p class="body-text">Thanks for playing, but this is a private gig. Have fun out there!</p>
+  `, { hideBadge: true });
+}
+
+function renderVerify(stop, opts = {}){
+  const attempts = opts.attempts || 0;
+  let hintRevealed = !!opts.hintShown;
+  const hasHint = !!stop.hint;
+  shell(`
+    <h1 class="title">${escapeHtml(stop.locationLabel)}</h1>
+    <p class="subtitle">One quick check.</p>
+    <p class="body-text">${escapeHtml(stop.question)}</p>
+    <div id="verify-feedback" class="feedback ${opts.error ? 'err show' : ''}">${opts.error ? 'Not quite — give it another go.' : ''}</div>
+    ${hasHint ? `
+      <button type="button" class="hint-btn" id="hint-btn"${hintRevealed ? ' style="display:none;"' : ''}>
+        ${LIGHTBULB_ICON}
+        <span>Need a hint?</span>
+      </button>
+      <div class="feedback hint${hintRevealed ? ' show' : ''}" id="hint-text">${escapeHtml(stop.hint)}</div>
+    ` : ''}
+    <label for="verify-input">Your answer</label>
+    <input type="text" id="verify-input" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="btn-row">
+      <button class="btn-primary" id="verify-submit">Submit</button>
+    </div>
+  `);
+  const input = document.getElementById('verify-input');
+  input.focus();
+  if(hasHint){
+    document.getElementById('hint-btn').addEventListener('click', () => {
+      hintRevealed = true;
+      document.getElementById('hint-text').classList.add('show');
+      document.getElementById('hint-btn').style.display = 'none';
+    });
+  }
+  const submit = () => {
+    const value = normalize(input.value);
+    const accepted = stop.answers.map(normalize);
+    if(value.length && accepted.includes(value)){
+      markCompleted(stop.id);
+      renderSuccess(stop);
+    } else {
+      renderVerify(stop, { attempts: attempts + 1, error: true, hintShown: hintRevealed });
+    }
+  };
+  document.getElementById('verify-submit').addEventListener('click', submit);
+  input.addEventListener('keydown', e => { if(e.key === 'Enter') submit(); });
+}
+
+function renderSuccess(stop){
+  shell(`
+    <div class="stamp-mark">Verified</div>
+    <h1 class="title">${stop.isFinal ? 'Quest complete.' : 'Your clue.'}</h1>
+    <p class="body-text">${formatMultiline(stop.clue)}</p>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="window.location.search='?view=board'">See your progress</button>
+    </div>
+  `);
+}
+
+function renderAlreadyDone(stop){
+  shell(`
+    <h1 class="title">${escapeHtml(stop.locationLabel)}</h1>
+    <p class="subtitle">Already found.</p>
+    <p class="body-text">${formatMultiline(stop.clue)}</p>
+    <div class="btn-row">
+      <button class="btn-ghost" onclick="window.location.search='?view=board'">See your progress</button>
+    </div>
+  `);
+}
+
+function renderBoard(overrideIds){
+  const progress = overrideIds ? { completed: overrideIds } : loadProgress();
+  const foundStops = CONFIG.stops.filter(s => progress.completed.includes(s.id));
+  const checklistHtml = foundStops.length
+    ? foundStops.map(s => `
+        <div class="checkpoint-line">
+          <span class="g-dot"></span>
+          <span class="g-name">${escapeHtml(s.locationLabel)}</span>
+        </div>`).join('')
+    : `<p class="empty-state">Nothing found yet.<br>Go find a tag.</p>`;
+
+  shell(`
+    <h1 class="title">Marlène's progress</h1>
+    <p class="subtitle">${progress.completed.length} of ${CONFIG.stops.length} checkpoints found</p>
+    <hr class="divider">
+    ${checklistHtml}
+  `, { badgeCount: progress.completed.length });
+}
+
+function fitPoemLines(){
+  const lines = Array.from(document.querySelectorAll('.poem-line'));
+  if(!lines.length) return;
+  const available = lines[0].parentElement.clientWidth;
+  let size = 16;
+  const apply = () => lines.forEach(el => { el.style.fontSize = size + 'px'; });
+  apply();
+  // shrink the whole set together until every line fits, so each
+  // line ends up the same size rather than fitting independently
+  while(size > 9 && lines.some(el => el.scrollWidth > available)){
+    size -= 0.5;
+    apply();
+  }
+}
+
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if(document.querySelector('.poem-line')) fitPoemLines();
+  }, 120);
+});
+
+/* ============================================================
+   TEMPORARY PREVIEW MODE
+   Visit the site with ?preview=1 to step through every card —
+   welcome, each stop's gate/verify/success/revisit screens, the
+   decline and unknown-tag screens, and the progress checklist both
+   empty and full — without solving anything or scanning real tags.
+   Delete this whole block plus the #preview-bar markup and CSS
+   before the real hunt goes live; it deliberately bypasses every
+   gate, and Marlène should never see it.
+   ============================================================ */
+function buildPreviewSteps(){
+  const steps = [{ label: 'Welcome', run: renderWelcome }];
+  CONFIG.stops.forEach(stop => {
+    if(stop.id === 1){
+      steps.push({ label: `${stop.locationLabel} — welcome (tag scan)`, run: () => renderWelcome({ nextStop: stop }) });
+    }
+    steps.push({ label: `${stop.locationLabel} — gate`, run: () => renderGate(stop) });
+    if(!stop.skipVerification){
+      steps.push({ label: `${stop.locationLabel} — verify`, run: () => renderVerify(stop) });
+    }
+    steps.push({ label: `${stop.locationLabel} — success`, run: () => renderSuccess(stop) });
+    steps.push({ label: `${stop.locationLabel} — revisit`, run: () => renderAlreadyDone(stop) });
+  });
+  steps.push({ label: 'Wrong answer state', run: () => renderVerify(CONFIG.stops[0], { attempts: 1, error: true }) });
+  steps.push({ label: 'Hint revealed', run: () => renderVerify(CONFIG.stops[0], { hintShown: true }) });
+  steps.push({ label: 'Declined', run: renderDecline });
+  steps.push({ label: 'Unknown tag', run: renderNotFound });
+  steps.push({ label: 'Progress — empty', run: () => renderBoard([]) });
+  steps.push({ label: 'Progress — full', run: () => renderBoard(CONFIG.stops.map(s => s.id)) });
+  return steps;
+}
+
+function initPreview(){
+  const steps = buildPreviewSteps();
+  let index = 0;
+  const bar = document.getElementById('preview-bar');
+  const label = document.getElementById('pv-label');
+  bar.classList.add('show');
+
+  function show(i){
+    index = Math.max(0, Math.min(steps.length - 1, i));
+    steps[index].run();
+    label.textContent = `${index + 1}/${steps.length} · ${steps[index].label}`;
+  }
+
+  document.getElementById('pv-prev').addEventListener('click', () => show(index - 1));
+  document.getElementById('pv-next').addEventListener('click', () => show(index + 1));
+  show(0);
+}
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+(function init(){
+  if(getParam('preview') === '1'){
+    initPreview();
+    return;
+  }
+
+  // hidden testing helper: visiting ?reset=1 clears progress and
+  // returns to a clean URL — not linked anywhere in the UI.
+  if(getParam('reset') === '1'){
+    localStorage.removeItem(CONFIG.storageKey);
+    window.location.search = '';
+    return;
+  }
+
+  const view = getParam('view');
+  const stopParam = getParam('stop');
+
+  if(view === 'board'){
+    renderBoard();
+    return;
+  }
+
+  if(stopParam !== null){
+    const stop = findStop(parseInt(stopParam, 10));
+    if(!stop){ renderNotFound(); return; }
+    const progress = loadProgress();
+    if(progress.completed.includes(stop.id)){
+      renderAlreadyDone(stop);
+    } else if(stop.id === 1){
+      renderWelcome({ nextStop: stop });
+    } else {
+      renderGate(stop);
+    }
+    return;
+  }
+
+  renderWelcome();
+})();
+</script>
+</body>
+</html>

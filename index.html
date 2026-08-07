@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Marlène's Squamish Quest</title>
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2c2160">
+<meta name="theme-color" content="#000000">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Squamish Quest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" href="icon-192.png">
@@ -736,7 +736,12 @@ function shell(innerHtml, opts = {}){
 function renderWelcome(opts = {}){
   const progress = loadProgress();
   const hasProgress = progress.completed.length > 0;
-  const nextStop = opts.nextStop || null;
+  const scannedTag1 = opts.nextStop || null;
+  // A fresh visitor (no progress yet) always gets a way to start, whether
+  // they arrived via a specific tag URL or the plain site URL — but the
+  // install button only shows for an actual tag-1 scan, per the original
+  // scope, not this fallback.
+  const nextStop = scannedTag1 || (!hasProgress ? CONFIG.stops[0] : null);
   applyBackground(nextStop ? nextStop.id : null);
   shell(`
     <h1 class="title">The hunt is on.</h1>
@@ -752,7 +757,7 @@ function renderWelcome(opts = {}){
       <div class="btn-row">
         <button class="btn-primary" id="welcome-next">Start quest</button>
       </div>
-      ${installPromptHtml()}
+      ${scannedTag1 ? installPromptHtml() : ''}
     ` : hasProgress ? `
       <hr class="divider">
       <div class="btn-row">
@@ -763,7 +768,7 @@ function renderWelcome(opts = {}){
   fitPoemLines();
   if(nextStop){
     document.getElementById('welcome-next').addEventListener('click', () => renderGate(nextStop));
-    wireInstallButton();
+    if(scannedTag1) wireInstallButton();
   }
 }
 

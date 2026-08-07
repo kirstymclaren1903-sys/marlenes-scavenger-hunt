@@ -1,11 +1,11 @@
 {
   "name": "Marlène's Squamish Quest",
   "short_name": "Squamish Quest",
-  "start_url": "./",
+  "start_url": "./?stop=1",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0d0a22",
-  "theme_color": "#2c2160",
+  "background_color": "#000000",
+  "theme_color": "#000000",
   "capture_links": "existing-client-navigate",
   "icons": [
     {

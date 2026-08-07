@@ -39,7 +39,6 @@
     margin:0; padding:0;
     min-height:100vh;
     min-height:100dvh;
-    background-color: var(--spruce-deep);
     font-family: var(--font-body);
     color: var(--ink);
   }
@@ -50,7 +49,7 @@
   #bg-layer{
     position: fixed;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     background-color: var(--spruce-deep);
     background-size: cover;
     background-position: center;
@@ -62,7 +61,7 @@
     padding: 28px 16px 60px;
   }
 
-  #app{ width:100%; max-width: 460px; }
+  #app{ position: relative; z-index: 1; width:100%; max-width: 460px; }
 
   a{ color: inherit; }
 
@@ -227,17 +226,17 @@
   /* Welcome screen only: Start quest in parchment, Add to Home Screen
      in red, with extra breathing room between the two button rows. */
   #welcome-next{
-    background: var(--parchment); color: var(--spruce-deep);
-    box-shadow: 0 4px 0 #c9b384;
-  }
-  #welcome-next:hover{ background: #fbf3e3; }
-
-  #install-btn{
     background: var(--err); color: var(--parchment);
     border-color: transparent;
     box-shadow: 0 4px 0 #5e2015;
   }
-  #install-btn:hover{ background: #a53823; }
+  #welcome-next:hover{ background: #a53823; }
+
+  #install-btn{
+    background: var(--parchment); color: var(--spruce-deep);
+    box-shadow: 0 4px 0 #c9b384;
+  }
+  #install-btn:hover{ background: #fbf3e3; }
 
   .btn-row + .btn-row{ margin-top: 10px; }
 
